@@ -203,7 +203,7 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="{{route('image.store',$product->id)}}" method="post" enctype="multipart/form-data">
+                                                <form action="{{route('image.store',$product->id)}}" method="post" enctype="multipart/form-data" id="image-form">
                                                     @csrf
                                                     <div class="form-group">
                                                         <label for="exampleFormControlInput1">Image</label>
@@ -211,7 +211,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary">Add</button>
+                                                        <button type="submit" class="btn btn-primary" id="add-image">Add</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -229,6 +229,25 @@
     </div>
     <!-- /.container-fluid -->
 
+    <script>
+        $(function () {
+
+            $("#image-form").validate({
+                rules: {
+                    pName: {
+                        required: true,
+                    },
+                    action: "required"
+                },
+                messages: {
+                    pName: {
+                        required: "Please enter some data",
+                    },
+                    action: "Please provide some data"
+                }
+            });
+        });
+    </script>
 
     <!-- Page level plugins -->
     <script src="vendor/datatables/jquery.dataTables.min.js"></script>

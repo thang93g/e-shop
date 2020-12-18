@@ -29,7 +29,7 @@
                             <h3 class="title">Categories</h3>
                             <ul class="categor-list">
                                 @foreach($categories as $category)
-                                    <li><a href="#">{{$category->name}}</a></li>
+                                    <li><a href="{{route('product.getByCategory',$category->id)}}">{{$category->name}}</a></li>
                                 @endforeach
                             </ul>
                         </div>
@@ -331,8 +331,8 @@
                                         <!--/ End Input Order -->
                                     </div>
                                     <div class="add-to-cart">
-                                        <button value="{{$product->id}}" href="#" id="cart-button{{$key}}" class="btn"
-                                                data-dismiss="modal">Add to cart
+                                        <button value="{{$product->id}}" href="#exampleModal" id="cart-button{{$key}}" class="btn"  data-dismiss="modal"
+                                                data-toggle="modal">Add to cart
                                         </button>
                                         <a href="#" class="btn min"><i class="ti-heart"></i></a>
                                         <a href="#" class="btn min"><i class="fa fa-compress"></i></a>
@@ -354,7 +354,21 @@
             </div>
         </div>
 
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-footer">
+                        <h5>Add to cart success...</h5>
+                        <a style="color: white" type="button" class="btn btn-secondary" data-dismiss="modal">CONTINUE SHOPPING</a>
+                        <a style="color: white" href="{{route('cart.index')}}" type="button" class="btn btn-primary">VIEW CART</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
+
+
             $(document).ready(function () {
                 $('#cart-button{{$key}}').click(function () {
                     @if(\Illuminate\Support\Facades\Session::has('login'))

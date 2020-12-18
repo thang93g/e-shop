@@ -23,4 +23,5 @@ Route::prefix('cart')->group(function (){
   Route::post('/',[CartController::class,'store'])->name('cart.store');
   Route::get('/',[CartController::class,'getAll'])->name('cart.getAll');
   Route::post('/{id}',[CartController::class,'update'])->name('cart.update');
+  Route::get('/{id}',[CartController::class,'destroy'])->name('cart.destroy');
 });

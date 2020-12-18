@@ -22,6 +22,7 @@ class CartController extends Controller
         $totalPrice = DB::table('carts')
             ->select(DB::raw('SUM(products.price * carts.quantity) as price'))
             ->join('products','products.id','=', 'carts.product_id')
+            ->where('user_id','=',$id)
             ->get();
 
         return view('front-end.cart',compact(['carts','totalPrice']));
@@ -96,6 +97,11 @@ class CartController extends Controller
     {
         $cart = Cart::find($id);
         $cart->delete();
-        return redirect()->route('cart.index');
+//        return redirect()->route('cart.index');
+    }
+
+    public function checkOut()
+    {
+
     }
 }

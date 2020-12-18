@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -42,6 +44,7 @@ class ProductController extends Controller
     {
         $product = new Product();
         $product->fill($request->all());
+
         $imageName = time().'.'.$request->image->extension();
         $request->image->move(public_path('uploads'), $imageName);
         $product->image = 'uploads/'.$imageName;
@@ -111,5 +114,18 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->delete();
         return redirect()->route('product.index');
+    }
+
+    public function getByCategory($id)
+    {
+        $categories = Category::all();
+        $products = DB::table('products')->where('category',$id)->get();
+        $images = Image::all();
+        return view('front-end.shop',compact(['products','categories','images']));
+    }
+
+    public function search()
+    {
+
     }
 }

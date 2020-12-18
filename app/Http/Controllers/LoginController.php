@@ -20,8 +20,13 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             // Authentication passed...
             \Illuminate\Support\Facades\Session::push('login',true);
-            return redirect()->route('category.index');
+            if ($request->email == 'admin') {
+                return redirect()->route('admin.showHomeAdmin');
+            } else {
+                return redirect()->route('home.showHome');
+            }
         } else {
+            \Illuminate\Support\Facades\Session::push('login-fail',false);
             return redirect()->route('login');
         }
     }

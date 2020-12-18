@@ -160,47 +160,12 @@
                                     <span>{{\Illuminate\Support\Facades\Auth::user()->carts->sum('quantity')}} Items</span>
                                     <a href="{{route('cart.index')}}">View Cart</a>
                                 </div>
-                                <ul class="shopping-list">
-                                    @foreach(\Illuminate\Support\Facades\Auth::user()->carts as $key => $cart)
-                                    <li>
-                                        <button href="#" value="{{$cart->id}}" class="remove{{$key}}" title="Remove this item"><i class="fa fa-remove"></i></button>
-                                        <a class="cart-img" href="#"><img src="{{$cart->products->image}}" alt="#"></a>
-                                        <h4><a href="#">{{$cart->products->name}}</a></h4>
-                                        <p class="quantity">{{$cart->quantity}}x - <span class="amount">${{number_format($cart->products->price,2)}}</span></p>
-                                    </li>
-
-
-                                        <script>
-                                            $(document).ready(function () {
-                                                $('.remove{{$key}}').click(function () {
-                                                    let id = $(this).val();
-                                                    console.log(id)
-                                                    remove(id);
-                                                })
-
-                                                var remove = function (id) {
-                                                    $.ajax({
-                                                        url: 'api/cart/'.id,
-                                                        type: 'DELETE',
-                                                        success: function (response) {
-                                                            console.log(response);
-                                                        }
-                                                    })
-                                                }
-                                            })
-
-
-
-
-                                        </script>
-                                    @endforeach
-                                </ul>
                                 <div class="bottom">
                                     <div class="total">
                                         <span>Total</span>
                                         <span class="total-amount">$134.00</span>
                                     </div>
-                                    <a href="checkout.html" class="btn animate">Checkout</a>
+                                    <a href="{{route('check-out')}}" class="btn animate">Checkout</a>
                                 </div>
                             </div>
                             <!--/ End Shopping Item -->
@@ -229,17 +194,17 @@
                                             <li><a href="#">Shop<i class="ti-angle-down"></i><span class="new">New</span></a>
                                                 <ul class="dropdown">
                                                     <li><a href="{{route('home.showShop')}}">Shop Grid</a></li>
-                                                    <li><a href="cart.html">Cart</a></li>
+                                                    <li><a href="{{route('cart.index')}}">Cart</a></li>
                                                     <li><a href="checkout.html">Checkout</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="#">Pages</a></li>
-                                            <li><a href="#">Blog<i class="ti-angle-down"></i></a>
+                                            <li><a href="https://github.com/thang93g">Pages</a></li>
+                                            <li><a href="{{route('home.showBlog')}}">Blog<i class="ti-angle-down"></i></a>
                                                 <ul class="dropdown">
-                                                    <li><a href="blog-single-sidebar.html">Blog Single Sidebar</a></li>
+                                                    <li><a href="{{route('home.showBlog')}}">Blog Single Sidebar</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="contact.html">Contact Us</a></li>
+                                            <li><a href="{{route('home.showContact')}}">Contact Us</a></li>
                                         </ul>
                                     </div>
                                 </div>

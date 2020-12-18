@@ -62,6 +62,9 @@
                                     <button type="submit" href="index.html" class="btn btn-primary btn-user btn-block">
                                         Login
                                     </button>
+                                    @if(\Illuminate\Support\Facades\Session::has('login-fail'))
+                                        <h5 class="text-danger text-center">In valid email or password</h5>
+                                    @endif
                                     <hr>
                                     <a href="index.html" class="btn btn-google btn-user btn-block">
                                         <i class="fab fa-google fa-fw"></i> Login with Google

@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,11 +29,14 @@ Route::post('register',[UserController::class,'store'])->name('user.store');
 Route::get('logout',[LoginController::class,'logOut'])->name('logout');
 
 
-Route::get('',[HomeController::class,'showHome'])->name('home.showHome');
+Route::get('/',[HomeController::class,'showHome'])->name('home.showHome');
 Route::get('shop',[HomeController::class,'showShop'])->name('home.showShop');
-
+Route::get('shop/{id}',[ProductController::class,'getByCategory'])->name('product.getByCategory');
+Route::get('blog',[HomeController::class,'showBlog'])->name('home.showBlog');
+Route::get('contact',[HomeController::class,'showContact'])->name('home.showContact');
 
 Route::middleware('auth')->prefix('admin')->group(function (){
+    Route::get('/',[AdminController::class,'showHomeAdmin'])->name('admin.showHomeAdmin');
     Route::prefix('product')->group(function (){
         Route::get('',[ProductController::class,'index'])->name('product.index');
         Route::post('',[ProductController::class,'store'])->name('product.store');
@@ -47,12 +52,15 @@ Route::middleware('auth')->prefix('admin')->group(function (){
     Route::post('category/add',[CategoryController::class,'store'])->name('category.store');
     Route::get('category/{id}',[CategoryController::class,'destroy'])->name('category.destroy');
 
-    Route::prefix('cart')->group(function (){
-        Route::get('/',[CartController::class,'index'])->name('cart.index');
-        Route::get('/delete/{id}',[CartController::class,'destroy'])->name('cart.destroy');
-    });
 });
 
-Route::get('test/',function (){
-    return view('front-end.cart');
+Route::middleware('auth')->group(function (){
+    Route::get('/cart',[CartController::class,'index'])->name('cart.index');
+    Route::get('check-out',[HomeController::class,'showCheckOut'])->name('check-out');
+//    Route::post('check-out',[OrderController::class,'store'])->name('order.store');
+    Route::post('check-out',function (){
+       return 'aaaaaaaaa';
+    })->name('order.store');
 });
+
+

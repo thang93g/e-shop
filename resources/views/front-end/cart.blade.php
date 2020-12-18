@@ -37,97 +37,123 @@
                         </thead>
                         <tbody>
                         @foreach($carts as $key => $cart)
-                            <tr>
-                                <td class="image" data-title="No"><img src="{{$cart->products->image}}" alt="#"></td>
-                                <td class="product-des" data-title="Description">
-                                    <p class="product-name"><a href="#">{{$cart->products->name}}</a></p>
-                                </td>
-                                <td class="price" data-title="Price">
-                                    <span>$ {{number_format($cart->products->price,2)}} </span></td>
-                                <td class="qty" data-title="Qty"><!-- Input Order -->
-                                    <div class="input-group">
-                                        <div class="button minus">
-                                            <button type="button" id="minus{{$key}}"
-                                                    class="btn btn-primary btn-number change-quantity{{$key}}"
-                                                    data-type="minus" data-field="quant[1]{{$key}}">
-                                                <i class="ti-minus"></i>
-                                            </button>
+                            @if($cart->user_id == \Illuminate\Support\Facades\Auth::user()->id)
+                                <tr id="cart{{$key}}">
+                                    <td class="image" data-title="No"><img src="{{$cart->products->image}}" alt="#">
+                                    </td>
+                                    <td class="product-des" data-title="Description">
+                                        <p class="product-name"><a>{{$cart->products->name}}</a></p>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <span>$ {{number_format($cart->products->price,2)}} </span></td>
+                                    <td class="qty" data-title="Qty"><!-- Input Order -->
+                                        <div class="input-group">
+                                            <div class="button minus">
+                                                <button @if($cart->quantity == 1) disabled @endif type="button"
+                                                        id="minus{{$key}}"
+                                                        class="btn btn-primary btn-number change-quantity{{$key}}"
+                                                        data-type="minus" data-field="quant[1]{{$key}}">
+                                                    <i class="ti-minus"></i>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" id="cart-id{{$key}}" value="{{$cart->id}}">
+                                            <input type="hidden" id="user-id{{$key}}" value="{{$cart->user_id}}">
+                                            <input type="hidden" id="product-id{{$key}}"
+                                                   value="{{$cart->products->id}}">
+                                            <input type="text" disabled name="quant[1]{{$key}}" class="input-number"
+                                                   id="input-number{{$key}}" data-min="1" data-max="100"
+                                                   value="{{$cart->quantity}}">
+                                            <div class="button plus">
+                                                <button type="button" id="plus{{$key}}"
+                                                        class="btn btn-primary btn-number change-quantity{{$key}}"
+                                                        data-type="plus" data-field="quant[1]{{$key}}">
+                                                    <i class="ti-plus"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <input type="hidden" id="cart-id{{$key}}" value="{{$cart->id}}">
-                                        <input type="hidden" id="user-id{{$key}}" value="{{$cart->user_id}}">
-                                        <input type="hidden" id="product-id{{$key}}" value="{{$cart->products->id}}">
-                                        <input type="text" disabled name="quant[1]{{$key}}" class="input-number"
-                                               id="input-number{{$key}}" data-min="1" data-max="100"
-                                               value="{{$cart->quantity}}">
-                                        <div class="button plus">
-                                            <button type="button" id="plus{{$key}}"
-                                                    class="btn btn-primary btn-number change-quantity{{$key}}"
-                                                    data-type="plus" data-field="quant[1]{{$key}}">
-                                                <i class="ti-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!--/ End Input Order -->
-                                </td>
-                                <td class="total-amount" data-title="Total">
-                                    <span>$ <span id="total-amount{{$key}}">{{$cart->products->price * $cart->quantity}}</span></span></td>
-                                <td class="action" data-title="Remove"><a href="{{route('cart.destroy',$cart->id)}}"><i
-                                            class="ti-trash remove-icon"></i></a></td>
-                            </tr>
+                                        <!--/ End Input Order -->
+                                    </td>
+                                    <td class="total-amount" data-title="Total">
+                                        <span>$ <span
+                                                id="total-amount{{$key}}">{{$cart->products->price * $cart->quantity}}</span></span>
+                                    </td>
+                                    <td class="action" data-title="Remove"><a id="delete-cart{{$key}}"><i
+                                                class="ti-trash remove-icon"></i></a></td>
+                                </tr>
+                                <script>
+                                    $('#delete-cart{{$key}}').click(function () {
+                                        let id = $('#cart-id{{$key}}').val();
+                                        let total_product = $('.total-count').text();
+                                        let quantity = Number($('#input-number{{$key}}').val());
+                                        let cart_subtotal = $('#cart_subtotal').text();
 
-                            <script>
-                                $('#minus{{$key}}').click(function () {
-                                    let quantity = Number($('#input-number{{$key}}').val()) - 1;
-                                    let id = $('#cart-id{{$key}}').val();
-                                    let user_id = $('#user-id{{$key}}').val();
-                                    let product_id = $('#product-id{{$key}}').val();
-                                    let cart = {user_id, product_id, quantity}
-                                    let total_amount = $('#total-amount{{$key}}').text();
-                                    let cart_subtotal = $('#cart_subtotal').text();
-                                    let total_product = $('.total-count').text();
 
-                                    $('#total-amount{{$key}}').text(total_amount - {{$cart->products->price}})
-                                    $('#cart_subtotal').text(cart_subtotal - {{$cart->products->price}})
-                                    $('#you-pay').text(cart_subtotal - {{$cart->products->price}})
-                                    $('.total-count').text(Number(total_product) - 1);
+                                        $.ajax({
+                                            type: "GET",
+                                            url: "api/cart/" + id,
+                                        })
 
-                                    $.ajax({
-                                        type: 'POST',
-                                        url: 'api/cart/' + id,
-                                        data: cart,
-                                        success: function (response) {
-                                            console.log(response);
-                                        }
+                                        $('#cart{{$key}}').remove();
+                                        $('.total-count').text(Number(total_product) - quantity);
+                                        $('#cart_subtotal').text(cart_subtotal - {{$cart->products->price}})
+                                        $('#you-pay').text(cart_subtotal - {{$cart->products->price}} +10)
+
+
                                     })
-                                });
-
-                                $('#plus{{$key}}').click(function () {
-                                    let quantity = Number($('#input-number{{$key}}').val()) + 1;
-                                    let id = $('#cart-id{{$key}}').val();
-                                    let user_id = $('#user-id{{$key}}').val();
-                                    let product_id = $('#product-id{{$key}}').val();
-                                    let cart = {user_id, product_id, quantity}
-                                    let total_amount = $('#total-amount{{$key}}').text();
-                                    let cart_subtotal = $('#cart_subtotal').text();
-                                    let total_product = $('.total-count').text();
-
-                                    $('#total-amount{{$key}}').text(Number(total_amount) + Number({{$cart->products->price}}))
-                                    $('#cart_subtotal').text(Number(cart_subtotal) + Number({{$cart->products->price}}))
-                                    $('#you-pay').text(Number(cart_subtotal) + Number({{$cart->products->price}}))
-                                    $('.total-count').text(Number(total_product) + 1);
-
-                                    $.ajax({
-                                        type: 'POST',
-                                        url: 'api/cart/' + id,
-                                        data: cart,
-                                        success: function (response) {
-                                            console.log(response);
-                                        }
-                                    })
-                                });
-                            </script>
 
 
+                                    $('#minus{{$key}}').click(function () {
+                                        let quantity = Number($('#input-number{{$key}}').val()) - 1;
+                                        let id = $('#cart-id{{$key}}').val();
+                                        let user_id = $('#user-id{{$key}}').val();
+                                        let product_id = $('#product-id{{$key}}').val();
+                                        let cart = {user_id, product_id, quantity}
+                                        let total_amount = $('#total-amount{{$key}}').text();
+                                        let cart_subtotal = $('#cart_subtotal').text();
+                                        let total_product = $('.total-count').text();
+
+                                        $('#total-amount{{$key}}').text(total_amount - {{$cart->products->price}})
+                                        $('#cart_subtotal').text(cart_subtotal - {{$cart->products->price}})
+                                        $('#you-pay').text(cart_subtotal - {{$cart->products->price}})
+                                        $('.total-count').text(Number(total_product) - 1);
+
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: 'api/cart/' + id,
+                                            data: cart,
+                                            success: function (response) {
+                                                console.log(response);
+                                            }
+                                        })
+                                    });
+
+                                    $('#plus{{$key}}').click(function () {
+                                        let quantity = Number($('#input-number{{$key}}').val()) + 1;
+                                        let id = $('#cart-id{{$key}}').val();
+                                        let user_id = $('#user-id{{$key}}').val();
+                                        let product_id = $('#product-id{{$key}}').val();
+                                        let cart = {user_id, product_id, quantity}
+                                        let total_amount = $('#total-amount{{$key}}').text();
+                                        let cart_subtotal = $('#cart_subtotal').text();
+                                        let total_product = $('.total-count').text();
+
+                                        $('#total-amount{{$key}}').text(Number(total_amount) + Number({{$cart->products->price}}))
+                                        $('#cart_subtotal').text(Number(cart_subtotal) + Number({{$cart->products->price}}))
+                                        $('#you-pay').text(Number(cart_subtotal) + Number({{$cart->products->price}}))
+                                        $('.total-count').text(Number(total_product) + 1);
+
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: 'api/cart/' + id,
+                                            data: cart,
+                                            success: function (response) {
+                                                console.log(response);
+                                            }
+                                        })
+                                    });
+                                </script>
+
+                            @endif
                         @endforeach
                         </tbody>
                     </table>
@@ -166,7 +192,7 @@
                                         </li>
                                     </ul>
                                     <div class="button5">
-                                        <a href="#" class="btn">Checkout</a>
+                                        <a href="{{route('check-out')}}" class="btn">Checkout</a>
                                         <a href="{{route('home.showShop')}}" class="btn">Continue shopping</a>
                                     </div>
                                 </div>
